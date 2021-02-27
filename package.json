@@ -21,6 +21,7 @@
     "publish": "npm run clean && npm run deploy",
     "dev": "hexo s",
     "sync": "yuque-hexo sync",
+    "start": "webpack-dev-server --hot",
     "reset": "npm run clean:yuque && npm run sync"
   },
   "hexo": {
