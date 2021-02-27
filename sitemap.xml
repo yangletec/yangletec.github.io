@@ -9,14 +9,14 @@
   </url>
   
   <url>
-    <loc>http://example.com/2021/02/27/yuque/%E5%85%B3%E4%BA%8E%E6%88%91/</loc>
+    <loc>http://example.com/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%EF%BD%9C%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E9%9B%86%E6%88%90%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90mongodb%E7%9A%84%20starter/</loc>
     
     <lastmod>2021-02-27</lastmod>
     
   </url>
   
   <url>
-    <loc>http://example.com/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%EF%BD%9C%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E9%9B%86%E6%88%90%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90mongodb%E7%9A%84%20starter/</loc>
+    <loc>http://example.com/2021/02/27/hello-world/</loc>
     
     <lastmod>2021-02-27</lastmod>
     
@@ -37,13 +37,6 @@
   </url>
   
   <url>
-    <loc>http://example.com/2021/02/27/hello-world/</loc>
-    
-    <lastmod>2021-02-27</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://example.com/books/index.html</loc>
     
     <lastmod>2021-02-27</lastmod>
@@ -51,14 +44,14 @@
   </url>
   
   <url>
-    <loc>http://example.com/categories/index.html</loc>
+    <loc>http://example.com/links/index.html</loc>
     
     <lastmod>2021-02-27</lastmod>
     
   </url>
   
   <url>
-    <loc>http://example.com/links/index.html</loc>
+    <loc>http://example.com/categories/index.html</loc>
     
     <lastmod>2021-02-27</lastmod>
     
