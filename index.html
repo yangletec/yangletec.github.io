@@ -74,7 +74,7 @@
     <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/27/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2021-02-27T03:55:48.437Z" itemprop="datePublished">2021-02-27</time>
+  <time class="dt-published" datetime="2021-02-27T05:18:09.697Z" itemprop="datePublished">2021-02-27</time>
 </a>
     
   </div>
@@ -110,7 +110,108 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/27/hello-world/" data-id="ckln6zqmm00004op3fozjd6ve" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/27/hello-world/" data-id="ckln9xk2a00003aoz5339cgs7" data-title="Hello World" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-yuque/测试主动推送" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/27/yuque/%E6%B5%8B%E8%AF%95%E4%B8%BB%E5%8A%A8%E6%8E%A8%E9%80%81/" class="article-date">
+  <time class="dt-published" datetime="2021-02-27T04:18:03.000Z" itemprop="datePublished">2021-02-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/27/yuque/%E6%B5%8B%E8%AF%95%E4%B8%BB%E5%8A%A8%E6%8E%A8%E9%80%81/">测试主动推送</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>asdasasdasd</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/27/yuque/%E6%B5%8B%E8%AF%95%E4%B8%BB%E5%8A%A8%E6%8E%A8%E9%80%81/" data-id="ckln9xk2k00043aoz5ej9bdxd" data-title="测试主动推送" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-yuque/网关限流使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/27/yuque/%E7%BD%91%E5%85%B3%E9%99%90%E6%B5%81%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2021-02-27T04:11:04.000Z" itemprop="datePublished">2021-02-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/27/yuque/%E7%BD%91%E5%85%B3%E9%99%90%E6%B5%81%E4%BD%BF%E7%94%A8/">网关限流使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="POM-依赖"><a href="#POM-依赖" class="headerlink" title="POM 依赖"></a>POM 依赖</h3><p>这里一定要注意，是网关引入的 redis-reactive，背压模式的 redis。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--基于 reactive stream 的redis --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis-reactive<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置按照请求-IP-的限流"><a href="#配置按照请求-IP-的限流" class="headerlink" title="配置按照请求 IP 的限流"></a>配置按照请求 IP 的限流</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">requestratelimiter_route</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">lb://pigx-upms</span></span><br><span class="line">          <span class="attr">order:</span> <span class="number">10000</span></span><br><span class="line">          <span class="attr">predicates:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Path=/admin/**</span></span><br><span class="line">          <span class="attr">filters:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">RequestRateLimiter</span></span><br><span class="line">              <span class="attr">args:</span></span><br><span class="line">                <span class="attr">redis-rate-limiter.replenishRate:</span> <span class="number">1</span> <span class="comment"># 令牌桶的容积</span></span><br><span class="line">                <span class="attr">redis-rate-limiter.burstCapacity:</span> <span class="number">3</span> <span class="comment"># 流速 每秒</span></span><br><span class="line">                <span class="attr">key-resolver:</span> <span class="string">&quot;#&#123;@remoteAddrKeyResolver&#125;&quot;</span> <span class="comment">#SPEL表达式去的对应的bean</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">StripPrefix=1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置 bean，多维度限流量的入口 对应上边 key-resolver</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 自定义限流标志的key，多个维度可以从这里入手</span></span><br><span class="line"><span class="comment">* exchange对象中获取服务ID、请求信息，用户信息等</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function">KeyResolver <span class="title">remoteAddrKeyResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> exchange -&gt; Mono.just(exchange.getRequest().getRemoteAddress().getHostName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OK 完成。</p>
+<h4 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h4><p>并发 5 个线程。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/283679/1599233764585-8327c654-6a5c-4d0b-988c-4a49d471ba50.png?x-oss-process=image/watermark,type_d3F5LW1pY3JvaGVp,size_14,text_cGlnNGNsb3VkLmNvbQ==,color_FFFFFF,shadow_50,t_80,g_se,x_10,y_10#align=left&display=inline&height=548&margin=%5Bobject%20Object%5D&originHeight=548&originWidth=1856&size=0&status=done&style=none&width=1856"></p>
+<h4 id="Redis-数据变化"><a href="#Redis-数据变化" class="headerlink" title="Redis 数据变化"></a>Redis 数据变化</h4><p>我们使用 redis 的<strong>monitor</strong> 命令，实时查看 redis 的操作情况。<br>会发现在 redis 中会操作两个 key</p>
+<ul>
+<li>request_rate_limiter.{xxx}.timestamp</li>
+<li>request_rate_limiter.{xxx}.tokens</li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/283679/1599233764836-2717d832-4280-4d91-8388-735290dee014.png?x-oss-process=image/watermark,type_d3F5LW1pY3JvaGVp,size_14,text_cGlnNGNsb3VkLmNvbQ==,color_FFFFFF,shadow_50,t_80,g_se,x_10,y_10#align=left&display=inline&height=1048&margin=%5Bobject%20Object%5D&originHeight=1048&originWidth=1624&size=0&status=done&style=none&width=1624"></p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p><img src="https://cdn.nlark.com/yuque/0/2020/png/283679/1599233764602-841306eb-7fdb-48ea-961f-3041abcb4908.png?x-oss-process=image/watermark,type_d3F5LW1pY3JvaGVp,size_14,text_cGlnNGNsb3VkLmNvbQ==,color_FFFFFF,shadow_50,t_80,g_se,x_10,y_10#align=left&display=inline&height=720&margin=%5Bobject%20Object%5D&originHeight=720&originWidth=1244&size=0&status=done&style=none&width=1244"></p>
+<p>Spring Cloud Gateway 默认实现 Redis 限流，如果扩展只需要实现 ratelimter 接口即可。</p>
+<h3 id="RedisRateLimter-的核心代码，判断是否取到令牌的实现，通过调用-redis-的-LUA-脚本。"><a href="#RedisRateLimter-的核心代码，判断是否取到令牌的实现，通过调用-redis-的-LUA-脚本。" class="headerlink" title="RedisRateLimter 的核心代码，判断是否取到令牌的实现，通过调用 redis 的 LUA 脚本。"></a>RedisRateLimter 的核心代码，判断是否取到令牌的实现，通过调用 redis 的 LUA 脚本。</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;Response&gt; <span class="title">isAllowed</span><span class="params">(String routeId, String id)</span> </span>&#123;</span><br><span class="line">	Config routeConfig = getConfig().getOrDefault(routeId, defaultConfig);</span><br><span class="line">	<span class="keyword">int</span> replenishRate = routeConfig.getReplenishRate();</span><br><span class="line">	<span class="keyword">int</span> burstCapacity = routeConfig.getBurstCapacity();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		List&lt;String&gt; keys = getKeys(id);</span><br><span class="line">		returns unixtime in seconds.</span><br><span class="line">		List&lt;String&gt; scriptArgs = Arrays.asList(replenishRate + <span class="string">&quot;&quot;</span>, burstCapacity + <span class="string">&quot;&quot;</span>,</span><br><span class="line">				Instant.now().getEpochSecond() + <span class="string">&quot;&quot;</span>, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">		<span class="comment">// 这里是核心，执行redis 的LUA 脚本。</span></span><br><span class="line">		Flux&lt;List&lt;Long&gt;&gt; flux =</span><br><span class="line">		<span class="keyword">this</span>.redisTemplate.execute(<span class="keyword">this</span>.script, keys, scriptArgs);</span><br><span class="line">		<span class="keyword">return</span> flux.onErrorResume(throwable -&gt; Flux.just(Arrays.asList(<span class="number">1L</span>, -<span class="number">1L</span>)))</span><br><span class="line">				.reduce(<span class="keyword">new</span> ArrayList&lt;Long&gt;(), (longs, l) -&gt; &#123;</span><br><span class="line">					longs.addAll(l);</span><br><span class="line">					<span class="keyword">return</span> longs;</span><br><span class="line">				&#125;) .map(results -&gt; &#123;</span><br><span class="line">					<span class="keyword">boolean</span> allowed = results.get(<span class="number">0</span>) == <span class="number">1L</span>;</span><br><span class="line">					Long tokensLeft = results.get(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">					Response response = <span class="keyword">new</span> Response(allowed, getHeaders(routeConfig, tokensLeft));</span><br><span class="line"></span><br><span class="line">					<span class="keyword">if</span> (log.isDebugEnabled()) &#123;</span><br><span class="line">						log.debug(<span class="string">&quot;response: &quot;</span> + response);</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">return</span> response;</span><br><span class="line">				&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">		log.error(<span class="string">&quot;Error determining if user allowed from redis&quot;</span>, e);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> Mono.just(<span class="keyword">new</span> Response(<span class="keyword">true</span>, getHeaders(routeConfig, -<span class="number">1L</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LUA-脚本"><a href="#LUA-脚本" class="headerlink" title="LUA 脚本"></a>LUA 脚本</h4><p><img src="https://cdn.nlark.com/yuque/0/2020/png/283679/1599233764816-87e979fc-c306-43e5-bb76-35c432a1cc5f.png?x-oss-process=image/watermark,type_d3F5LW1pY3JvaGVp,size_14,text_cGlnNGNsb3VkLmNvbQ==,color_FFFFFF,shadow_50,t_80,g_se,x_10,y_10#align=left&display=inline&height=766&margin=%5Bobject%20Object%5D&originHeight=766&originWidth=1338&size=0&status=done&style=none&width=1338"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/27/yuque/%E7%BD%91%E5%85%B3%E9%99%90%E6%B5%81%E4%BD%BF%E7%94%A8/" data-id="ckln9xk31000b3aoz6vp0h7ua" data-title="网关限流使用" class="article-share-link">Share</a>
       
       
       
@@ -154,7 +255,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/26/yuque/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckln6zqmy00054op3gup436gv" data-title="第一篇博客" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/26/yuque/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckln9xk30000a3aoz25k4hsox" data-title="第一篇博客" class="article-share-link">Share</a>
       
       
       
@@ -193,7 +294,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/26/yuque/dsfgsdfgsdf/" data-id="ckln6zqmv00024op3gpnf2jc2" data-title="dsfgsdfgsdf" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/26/yuque/dsfgsdfgsdf/" data-id="ckln9xk2i00023aoz1wor4ghs" data-title="dsfgsdfgsdf" class="article-share-link">Share</a>
       
       
       
@@ -232,7 +333,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/26/yuque/#%20%E6%B5%8B%E8%AF%95%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83fsfsfdsdf/" data-id="ckln6zqmt00014op38mic1hqi" data-title="# 测试文档自动发布fsfsfdsdf" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/26/yuque/#%20%E6%B5%8B%E8%AF%95%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83fsfsfdsdf/" data-id="ckln9xk2g00013aoz8x3df93r" data-title="# 测试文档自动发布fsfsfdsdf" class="article-share-link">Share</a>
       
       
       
@@ -275,7 +376,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/26/yuque/%E5%8D%9A%E5%AE%A2%E7%AC%AC1%E6%9C%9F/" data-id="ckln6zqmw00034op3hkr28zgb" data-title="博客第1期" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/26/yuque/%E5%8D%9A%E5%AE%A2%E7%AC%AC1%E6%9C%9F/" data-id="ckln9xk2k00033aozefwk8u82" data-title="博客第1期" class="article-share-link">Share</a>
       
       
       
@@ -318,7 +419,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2018/10/05/yuque/%E6%B5%8B%E8%AF%95%E6%A0%87%E7%AD%BE%E5%92%8C%E5%88%86%E7%B1%BB/" data-id="ckln6zqmx00044op3fsffe1fv" data-title="测试标签和分类" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2018/10/05/yuque/%E6%B5%8B%E8%AF%95%E6%A0%87%E7%AD%BE%E5%92%8C%E5%88%86%E7%B1%BB/" data-id="ckln9xk2l00053aozdj1mdjxb" data-title="测试标签和分类" class="article-share-link">Share</a>
       
       
       
@@ -388,19 +489,19 @@
           </li>
         
           <li>
+            <a href="/2021/02/27/yuque/%E6%B5%8B%E8%AF%95%E4%B8%BB%E5%8A%A8%E6%8E%A8%E9%80%81/">测试主动推送</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/27/yuque/%E7%BD%91%E5%85%B3%E9%99%90%E6%B5%81%E4%BD%BF%E7%94%A8/">网关限流使用</a>
+          </li>
+        
+          <li>
             <a href="/2021/02/26/yuque/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">第一篇博客</a>
           </li>
         
           <li>
             <a href="/2021/02/26/yuque/dsfgsdfgsdf/">dsfgsdfgsdf</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/26/yuque/#%20%E6%B5%8B%E8%AF%95%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83fsfsfdsdf/"># 测试文档自动发布fsfsfdsdf</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/26/yuque/%E5%8D%9A%E5%AE%A2%E7%AC%AC1%E6%9C%9F/">博客第1期</a>
           </li>
         
       </ul>
