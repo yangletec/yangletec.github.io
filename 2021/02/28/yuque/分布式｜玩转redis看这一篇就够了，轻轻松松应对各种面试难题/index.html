@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题 | Hexo</title>
+  <meta name="description" content="数据存储类型介绍业务数据的特殊性作为缓存使用 原始业务功能设计 秒杀 618 活动 双 11 活动 12306    附加功能 系统功能优化升级 单服务器升级集群 session 管理 Token 管理    Redis 数据类型(5 种常用) string      string hash      HashMap list      LinkedList set      HashSet so">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题">
+<meta property="og:url" content="http://example.com/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/index.html">
+<meta property="og:site_name" content="AI码师">
+<meta property="og:description" content="数据存储类型介绍业务数据的特殊性作为缓存使用 原始业务功能设计 秒杀 618 活动 双 11 活动 12306    附加功能 系统功能优化升级 单服务器升级集群 session 管理 Token 管理    Redis 数据类型(5 种常用) string      string hash      HashMap list      LinkedList set      HashSet so">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gw.alipayobjects.com/os/lib/twemoji/11.2.0/2/svg/1f194.svg#align=left&display=inline&height=18&margin=%5Bobject%20Object%5D&originHeight=150&originWidth=150&status=done&style=none&width=18">
+<meta property="og:image" content="https://gw.alipayobjects.com/os/lib/twemoji/11.2.0/2/svg/1f194.svg#align=left&display=inline&height=18&margin=%5Bobject%20Object%5D&originHeight=150&originWidth=150&status=done&style=none&width=18">
+<meta property="article:published_time" content="2021-02-28T14:21:40.000Z">
+<meta property="article:modified_time" content="2021-02-28T14:23:04.322Z">
+<meta property="article:author" content="AI码师">
+<meta property="article:tag" content="JAVA,PYTHON,程序人生,面试经验">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gw.alipayobjects.com/os/lib/twemoji/11.2.0/2/svg/1f194.svg#align=left&display=inline&height=18&margin=%5Bobject%20Object%5D&originHeight=150&originWidth=150&status=done&style=none&width=18">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="AI码师" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://yangletec.github.io/" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">AI码师</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Web Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hefei, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>关注公众号“AI 码师”领取2021最新面试资料一份</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+
+    
+      
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:22:36.422Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/" class="title">分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:21:40.000Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/yuque/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BD%9C%E6%80%92%E8%82%9D%E4%BA%869%E9%81%93%20HashMap%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%9C%80%E8%A6%81%E7%9A%84%E5%BF%AB%E9%80%9F%E6%9D%A5%E5%8F%96%EF%BC%88%E4%B8%8D%E5%8C%85%E9%82%AE%E5%93%A6%EF%BC%89/" class="title">源码阅读｜怒肝了9道 HashMap经典面试题，需要的快速来取（不包邮哦）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:21:00.000Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/" class="title">趣味编程故事｜java进程占用cpu过高怎么办，别急我来帮你</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-27T09:43:33.000Z" itemprop="datePublished">2021-02-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/27/yuque/5%E5%B9%B4%E8%80%81java%E5%BC%80%E5%8F%91%EF%BC%8C%E6%88%91%E7%9C%8B%E8%BF%87%E5%93%AA%E4%BA%9B%E4%B9%A6%EF%BC%8C%E7%9C%8B%E8%BF%87%E5%93%AA%E4%BA%9B%E8%A7%86%E9%A2%91%EF%BC%8C%E5%88%B7%E8%BF%87%E5%93%AA%E4%BA%9B%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%83%BD%E5%9C%A8%E8%BF%99%E9%87%8C%E4%BA%86/" class="title">5年老java开发，我看过哪些书，看过哪些视频，刷过哪些面试题，都在这里了</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-27T09:40:32.000Z" itemprop="datePublished">2021-02-27</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<meta  name ="referrer" content ="no-referrer"/>
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-yuque/分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/" class="article-date">
+	  <time datetime="2021-02-28T14:21:40.000Z" itemprop="datePublished">2021-02-28</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 15(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="数据存储类型介绍"><a href="#数据存储类型介绍" class="headerlink" title="数据存储类型介绍"></a>数据存储类型介绍</h1><h3 id="业务数据的特殊性"><a href="#业务数据的特殊性" class="headerlink" title="业务数据的特殊性"></a>业务数据的特殊性</h3><h4 id="作为缓存使用"><a href="#作为缓存使用" class="headerlink" title="作为缓存使用"></a>作为缓存使用</h4><ul>
+<li>原始业务功能设计<ul>
+<li>秒杀</li>
+<li>618 活动</li>
+<li>双 11 活动</li>
+<li>12306</li>
+</ul>
+</li>
+</ul>
+<h4 id="附加功能"><a href="#附加功能" class="headerlink" title="附加功能"></a>附加功能</h4><ul>
+<li>系统功能优化升级<ul>
+<li>单服务器升级集群</li>
+<li>session 管理</li>
+<li>Token 管理</li>
+</ul>
+</li>
+</ul>
+<h3 id="Redis-数据类型-5-种常用"><a href="#Redis-数据类型-5-种常用" class="headerlink" title="Redis 数据类型(5 种常用)"></a>Redis 数据类型(5 种常用)</h3><ul>
+<li>string      string</li>
+<li>hash      HashMap</li>
+<li>list      LinkedList</li>
+<li>set      HashSet</li>
+<li>sorted_set      TreeSet</li>
+</ul>
+<h3 id="string"><a href="#string" class="headerlink" title="string"></a>string</h3><ul>
+<li>get key</li>
+<li>set key</li>
+<li>del [key]</li>
+<li>mset key1 value1 key2 value2</li>
+<li>mget key1 key2</li>
+<li>strlen key</li>
+<li>append key value</li>
+</ul>
+<h6 id="单数据操作与多数据操作的选择之或？"><a href="#单数据操作与多数据操作的选择之或？" class="headerlink" title="单数据操作与多数据操作的选择之或？"></a>单数据操作与多数据操作的选择之或？</h6><ul>
+<li>比较发送与执行时间消耗时间对比</li>
+</ul>
+<h6 id="string-数据类型的扩展操作"><a href="#string-数据类型的扩展操作" class="headerlink" title="string 数据类型的扩展操作"></a>string 数据类型的扩展操作</h6><ul>
+<li>设置数值数据新增加指定范围的值，可以使用负号作为递减操作</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">incr key</span><br><span class="line">incrby key increment</span><br><span class="line">incrbyfloat key increment</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置数值数据新减去指定范围的值</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">decr key</span><br><span class="line">decrby key increment</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置数值有效期 解决时效性控制的操作</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setex key second value   秒</span><br><span class="line">psetex key milliseconds value 毫秒</span><br></pre></td></tr></table></figure>
+
+<h6 id="string-类型数据操作时的注意事项"><a href="#string-类型数据操作时的注意事项" class="headerlink" title="string 类型数据操作时的注意事项"></a>string 类型数据操作时的注意事项</h6><ul>
+<li>设置数值有效期 解决时效性控制的操作<ol>
+<li> 数据未获取到</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">（nil）等于 null</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li> 数据最大存储量 <code>512m</code></li>
+<li> 数据计算最大范围 (java 中的 long 的最大值) <code>9223372036854775807</code></li>
+</ol>
+<h6 id="string-类型应用场景"><a href="#string-类型应用场景" class="headerlink" title="string 类型应用场景"></a>string 类型应用场景</h6><ul>
+<li>在 redis 中存储用户信息<ol>
+<li> user<img src="https://gw.alipayobjects.com/os/lib/twemoji/11.2.0/2/svg/1f194.svg#align=left&display=inline&height=18&margin=%5Bobject%20Object%5D&originHeight=150&originWidth=150&status=done&style=none&width=18">333:fans -&gt; 11111   数值</li>
+<li> user<img src="https://gw.alipayobjects.com/os/lib/twemoji/11.2.0/2/svg/1f194.svg#align=left&display=inline&height=18&margin=%5Bobject%20Object%5D&originHeight=150&originWidth=150&status=done&style=none&width=18">333 -&gt; {id:333,fans:333} json</li>
+</ol>
+</li>
+<li>redis 应用于各种结构性和非结构性高热度数据访问的加速</li>
+<li>key 的设置约定   表名:主键名:主键值:字段名</li>
+</ul>
+<h3 id="hash-底层使用哈希表结构存储"><a href="#hash-底层使用哈希表结构存储" class="headerlink" title="hash 底层使用哈希表结构存储"></a>hash <code>底层使用哈希表结构存储</code></h3><h6 id="hash-存储结构优化"><a href="#hash-存储结构优化" class="headerlink" title="hash 存储结构优化"></a>hash 存储结构优化</h6><ul>
+<li>如果 field 字段数量少，使用数据数组进行存储</li>
+<li>如果 field 字段数量多，存储结构使用 hashmap</li>
+</ul>
+<h6 id="hash-类型数据的基本操作"><a href="#hash-类型数据的基本操作" class="headerlink" title="hash 类型数据的基本操作"></a>hash 类型数据的基本操作</h6><ul>
+<li>添加/修改数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hset key field value</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hget key field</span><br><span class="line">hgetall key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdel key field [field2]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>添加/修改多个数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmset key field1 value1 field2 value2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取多个数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmget key filed1 field2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取 hash 表中字段的数量</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hlen key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取 hash 表中是否存在指定字段</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexists key field</span><br></pre></td></tr></table></figure>
+
+<h6 id="hash-数据类型的扩展操作"><a href="#hash-数据类型的扩展操作" class="headerlink" title="hash 数据类型的扩展操作"></a>hash 数据类型的扩展操作</h6><ul>
+<li>获取 hash 表中所有的字段名和值</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  hkeys key</span><br><span class="line">hvalues key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置值自增</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">   hincrby key increment</span><br><span class="line">hincrbyfloat key increment</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置值字符，存在则设置失败，不存在则设置成功</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setnx key field value</span><br></pre></td></tr></table></figure>
+
+<h6 id="hash-数据类型注意事项"><a href="#hash-数据类型注意事项" class="headerlink" title="hash 数据类型注意事项"></a>hash 数据类型注意事项</h6><ul>
+<li>hash 类型 value 只能存字符串</li>
+<li>每个 hash 可以存储 2^32-1 个键值对</li>
+<li>hash 可以灵活操作属性，虽然可以作为对象使用，但是不能滥用</li>
+<li>hgetall key 获取 hash 内的键值对</li>
+</ul>
+<h6 id="hash-数据类型应用场景"><a href="#hash-数据类型应用场景" class="headerlink" title="hash 数据类型应用场景"></a>hash 数据类型应用场景</h6><ul>
+<li>购物车</li>
+</ul>
+<h3 id="list"><a href="#list" class="headerlink" title="list"></a>list</h3><h6 id="list-类型数据的基本操作-链表"><a href="#list-类型数据的基本操作-链表" class="headerlink" title="list 类型数据的基本操作 链表"></a>list 类型数据的基本操作 链表</h6><ul>
+<li>添加/修改数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">      lpush key value [value]</span><br><span class="line">rpush key value [value]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  lrange key start stop (0,-1获取全部)</span><br><span class="line">lindex key index</span><br><span class="line">llen key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取并移除数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  lpop key</span><br><span class="line">rpop key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>规定时间内获取并移除数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">   blpop key [key] timeout (单位为秒)</span><br><span class="line">brpop key [key] timeout (单位为秒)</span><br></pre></td></tr></table></figure>
+
+<h6 id="业务场景"><a href="#业务场景" class="headerlink" title="业务场景"></a>业务场景</h6><ul>
+<li>删除指定元素</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lrem key count value</span><br></pre></td></tr></table></figure>
+
+<h6 id="list-数据类型注意事项"><a href="#list-数据类型注意事项" class="headerlink" title="list 数据类型注意事项"></a>list 数据类型注意事项</h6><ul>
+<li>list 数据保存的数据都是 string 类型，最多 2^32-1 个元素</li>
+<li>list 常被用作队列</li>
+<li>list 结束索引为-1</li>
+<li>list 可以进行数据分页操作 第一页来自 list，第二页及更多来自数据库</li>
+</ul>
+<h6 id="业务场景-1"><a href="#业务场景-1" class="headerlink" title="业务场景"></a>业务场景</h6><ul>
+<li>信息管理</li>
+<li>多路信息汇总</li>
+<li>最新消息</li>
+</ul>
+<h3 id="set-无序"><a href="#set-无序" class="headerlink" title="set 无序"></a>set 无序</h3><h6 id="set-类型数据的基本操作"><a href="#set-类型数据的基本操作" class="headerlink" title="set 类型数据的基本操作"></a>set 类型数据的基本操作</h6><ul>
+<li>添加数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd key memeber1 [member]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取全部数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smembers key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">srem key member1 [member]</span><br></pre></td></tr></table></figure>
+
+<h6 id="set-类型数据的扩展操作"><a href="#set-类型数据的扩展操作" class="headerlink" title="set 类型数据的扩展操作"></a>set 类型数据的扩展操作</h6><ul>
+<li>随机获取几个元素</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">srandmember key count</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>随机获取几个元素 并删除</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spop key count</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取元素个数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求两个集合的交并差</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sinter key key2</span><br><span class="line">sunion key1 key2</span><br><span class="line">sdiff key1 key2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>求两个集合的交并差 并存到指定集合</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sinterstore desc key key2</span><br><span class="line">sunionstore desc key1 key2</span><br><span class="line">sdiffstore desc key1 key2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将指定数据从原始集合移动到目标集合中</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smove source desc member</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看数据是否存在</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sismember key memeber</span><br></pre></td></tr></table></figure>
+
+<h6 id="业务场景-2"><a href="#业务场景-2" class="headerlink" title="业务场景"></a>业务场景</h6><ul>
+<li>随机推荐和抽奖等</li>
+</ul>
+<h3 id="zset-有序"><a href="#zset-有序" class="headerlink" title="zset 有序"></a>zset 有序</h3><h6 id="zset-类型数据的基本操作"><a href="#zset-类型数据的基本操作" class="headerlink" title="zset 类型数据的基本操作"></a>zset 类型数据的基本操作</h6><ul>
+<li>添加数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd key score memeber1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查询</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrange key start stop [withscores]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查询 反序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrevrange key start stop [withscores]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrem key memeber [member]</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据类型实战"><a href="#数据类型实战" class="headerlink" title="数据类型实战"></a>数据类型实战</h3><ul>
+<li>限流 如果限流为 100 则把最大值-100，利用异常做限制，不需要每次进行判断</li>
+</ul>
+<h3 id="通用命令"><a href="#通用命令" class="headerlink" title="通用命令"></a>通用命令</h3><ul>
+<li>删除 key  del key</li>
+<li>key 的类型 type key</li>
+<li>key 是否存在 exists key</li>
+<li>为 key 设置有效期</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> expire key  seconds</span><br><span class="line">pexpire key millseconds</span><br><span class="line"> expireeat key timestamp</span><br><span class="line"> pexpireeat key mill-timestamp</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取 key 有效时间</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ttl key</span><br><span class="line">pttl key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>切换 key 从临时转为永久</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">persist key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查询模式</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keys *  匹配所有</span><br><span class="line">keys ?lezai 匹配单个字符</span><br><span class="line">keys a[abc]  匹配aa ab ac</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>key 重命名</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rename key new key</span><br><span class="line">renamenx key newkey 新key不存在则成功</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>对所有 key 里面的内容排序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>切换数据库</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select dbindex</span><br><span class="line">ping pong</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据库移动</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mv key  dbindex</span><br><span class="line">flushdb 删除当前库数据</span><br><span class="line">flushall 清除所有数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="Jedis"><a href="#Jedis" class="headerlink" title="Jedis"></a>Jedis</h3><ul>
+<li>客户端连接 redis</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">连接 Jedis jedis &#x3D;new Jedis(&quot;127.0.0.1&quot;,6379)</span><br><span class="line">设置 jedis.set(&quot;name&quot;,123)</span><br><span class="line">获取 jedis.get(&quot;name&quot;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Linux-安装-redis"><a href="#Linux-安装-redis" class="headerlink" title="Linux 安装 redis"></a>Linux 安装 redis</h3><ul>
+<li>下载 wget <a target="_blank" rel="noopener" href="http://download.redis.io/releases/redis-4.0.10.tar.gz">http://download.redis.io/releases/redis-4.0.10.tar.gz</a></li>
+<li>解压 tar-xvzf redis-4.0.10.tar.gz</li>
+<li>编译 make</li>
+<li>安装 make install</li>
+<li>指定端口启动 redis-server –port 9999</li>
+<li>指定端口连接 redis-cli -p 9999</li>
+<li>指定配置文件启动 redis-server conf/redis.conf</li>
+</ul>
+<h5 id="redis-服务端基本配置"><a href="#redis-服务端基本配置" class="headerlink" title="redis 服务端基本配置"></a>redis 服务端基本配置</h5><ul>
+<li>daemonize yes 以守护进程方式启动</li>
+<li>port 6379 设置启动端口</li>
+<li>dir “/redis/data” 设置当前服务文件保存位置</li>
+<li>logfile “744.log” 设置日志文件名</li>
+</ul>
+<h5 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h5><h6 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h6><ul>
+<li>save 手动执行保存一次快照信息</li>
+<li>相关配置</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dbfilename dump.rdb 设置本地数据库文件 默认为dump.rdb 一般设置为 dump-端口号.rdb</span><br><span class="line">rdbcompression yes 是否启动压缩</span><br><span class="line">rdbchecksum yes 是否对库文件进行校验</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>bgsave 使用 fork 函数生成一个子进程，在子进程中执行</li>
+<li>rdb 自动启动定时保存</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">配置信息 save second changenum</span><br><span class="line">save 900 1  900 秒内有一个key变化</span><br><span class="line">save 60 3 60秒内有3个key变化</span><br><span class="line">save 10 6</span><br></pre></td></tr></table></figure>
+
+<h6 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h6><h6 id="写数据的三种策略"><a href="#写数据的三种策略" class="headerlink" title="写数据的三种策略"></a>写数据的三种策略</h6><ul>
+<li>always 每次操作都同步写入到 aof 中，数据零误差 性能低</li>
+<li>everysec 每秒 将缓冲区的指令同步到 aof 中，系统宕机只会丢失一秒的数据</li>
+<li>no 系统控制 不可控</li>
+</ul>
+<h6 id="AOF-功能开启"><a href="#AOF-功能开启" class="headerlink" title="AOF 功能开启"></a>AOF 功能开启</h6><ul>
+<li>appendonly yes | no   开启持久化 默认不开启</li>
+<li>appendfsync always | everysec | no  AOF 策略</li>
+<li>appendfilename fielname</li>
+</ul>
+<h6 id="AOF-重写-重写规则"><a href="#AOF-重写-重写规则" class="headerlink" title="AOF 重写 重写规则"></a>AOF 重写 重写规则</h6><ul>
+<li>进程内已超时的数据不再重写</li>
+<li>忽略无效指令</li>
+<li>对同一数据的多条写合并为一条</li>
+<li>bgrewriteaof 重写 aof 指令</li>
+</ul>
+<h6 id="AOF-与-RDB-选择"><a href="#AOF-与-RDB-选择" class="headerlink" title="AOF 与 RDB 选择"></a>AOF 与 RDB 选择</h6><ul>
+<li>数据很敏感 使用 aof</li>
+<li>数据间断性呈现 RDB</li>
+<li>综合方案 同时开启 rdb+aof</li>
+</ul>
+<h1 id="Redis-高级操作"><a href="#Redis-高级操作" class="headerlink" title="Redis 高级操作"></a>Redis 高级操作</h1><h4 id="Redis-事务"><a href="#Redis-事务" class="headerlink" title="Redis 事务"></a>Redis 事务</h4><h5 id="事务的基本操作"><a href="#事务的基本操作" class="headerlink" title="事务的基本操作"></a>事务的基本操作</h5><ul>
+<li>开启事务</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multi 设定事务的开启 执行指令后，全都加入到事务中</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>执行事务</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec 设定事务的结束，同时执行事务，与multi成对出现</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>取消事务</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">discard 取消事务</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>注意</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">事务出错不能回滚，产生的数据不会回滚</span><br></pre></td></tr></table></figure>
+
+<h4 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h4><ul>
+<li>watch key1 key2 …</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">监控某个key，需要在事务外面使用，如果key被外部修改了，则终止事务的执行</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>unwatch</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">取消对事务的监控</span><br></pre></td></tr></table></figure>
+
+<h4 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h4><ul>
+<li>setnx key value</li>
+</ul>
+<h4 id="解决死锁-添加时效性"><a href="#解决死锁-添加时效性" class="headerlink" title="解决死锁 添加时效性"></a>解决死锁 添加时效性</h4><h4 id="Redis-删除策略"><a href="#Redis-删除策略" class="headerlink" title="Redis 删除策略"></a>Redis 删除策略</h4><h3 id="定时删除"><a href="#定时删除" class="headerlink" title="定时删除"></a>定时删除</h3><ul>
+<li>创建一个定时器，当 key 设置有过期时间，且过期时间到达，由定时器执行对键的删除操作</li>
+<li>牺牲 CPU 保证内存空间 CPU 空闲 内存紧张</li>
+</ul>
+<h3 id="惰性删除"><a href="#惰性删除" class="headerlink" title="惰性删除"></a>惰性删除</h3><ul>
+<li>在获取数据的时候，如果未过期，返回数据，过期了，删除，返回不存在</li>
+<li>牺牲存储保证 CPU 存储空间足 CPU 紧张</li>
+</ul>
+<h3 id="定期删除"><a href="#定期删除" class="headerlink" title="定期删除"></a>定期删除</h3><blockquote>
+<p>定期删除策略是怎么实现的？通过 activeExpireCycle 函数，serverCron 函数执行时，activeExpireCycle 函数就会被调用，规定的时间里面分多次遍历服务器的 expires 字典随机检查一部分 key 的过期时间，并删除其中的过期 key<br>例如 Redis 每秒处理：</p>
+<ol>
+<li>测试随机的 20 个 keys 进行相关过期检测。</li>
+<li>删除所有已经过期的 keys。</li>
+<li>如果有多于 25%的 keys 过期，重复步奏 1.</li>
+</ol>
+</blockquote>
+<h4 id="Redis-逐出算法"><a href="#Redis-逐出算法" class="headerlink" title="Redis 逐出算法"></a>Redis 逐出算法</h4><ul>
+<li>在执行每一个命令前，都调用 freememoryifneed,内存不足，需要临时删除一些数据清理空间</li>
+<li>maxmemory 最大内存</li>
+<li>maxmemory-samples 随机选择</li>
+<li>maxmemory-policy</li>
+<li>有效期的数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">volatile-lru 最近最少使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">volatile-lfu 最近使用次数最少</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">volatile-ttl 挑选将要过期的数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">volatile-random 任意选择数据淘汰</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>所有数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allkeys-lru 最近最少使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allkeys-lfu 最近使用次数最少</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allkeys-random 任意选择数据淘汰</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>no-enviction</li>
+</ul>
+<h4 id="高级数据类型"><a href="#高级数据类型" class="headerlink" title="高级数据类型"></a>高级数据类型</h4><h5 id="bitmaps"><a href="#bitmaps" class="headerlink" title="bitmaps"></a>bitmaps</h5><ul>
+<li>setbits key offset value</li>
+<li>getbits key offset</li>
+<li>bitop [and or not xor] destkey key1 key2 对多个 key 组合操作，保存到 destkey 中</li>
+<li>bitcount key [start end] 统计为 1 的数量</li>
+</ul>
+<h5 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h5><ul>
+<li>pfadd key element ..</li>
+<li>pfcount key</li>
+<li>pfmerge destkey sourcekey1 sourcekey2</li>
+<li>相关说明</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用于基数统计，不是集合，不保存数据，只记录数量而不是具体数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">核心是基数估算，最终数值存在一定误差</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">误差范围：0.81%</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">占用12k</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfadd 不是一次性分配12看，而是随基数增大而增加空间</span><br></pre></td></tr></table></figure>
+
+<h5 id="Geo-距离计算"><a href="#Geo-距离计算" class="headerlink" title="Geo 距离计算"></a>Geo 距离计算</h5><ul>
+<li>geoadd key longitude latitude member … 添加坐标</li>
+<li>geopos key member … 获取坐标</li>
+<li>geodist key member1 member2 unit 获取坐标点距离</li>
+<li>georadius key longitude latitude radius unit   根据坐标求范围内的数据</li>
+<li>georadiusbymember key memeber radius unit 根据点求范围内的数据</li>
+</ul>
+<h1 id="Redis-集群"><a href="#Redis-集群" class="headerlink" title="Redis 集群"></a>Redis 集群</h1><h2 id="主从复制简介"><a href="#主从复制简介" class="headerlink" title="主从复制简介"></a>主从复制简介</h2><h3 id="互联网“三高”"><a href="#互联网“三高”" class="headerlink" title="互联网“三高”"></a>互联网“三高”</h3><ul>
+<li>高性能</li>
+<li>高并发</li>
+<li>高可用  5 个 9 99.999%</li>
+</ul>
+<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><ul>
+<li>建立连接</li>
+<li>数据同步(复制数据)</li>
+<li>反复同步(命令传播)</li>
+<li>建立连接阶段工作流程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. 发送指令 slaveof ip port</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2. 接收到指令，响应对方</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3.保存master的ip与端口 masterip masterport</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4.根据连接保存的信息创建与master的socket</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5.向master周期发送ping，master相应pong</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6.slave 发送author password</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">7.验证授权</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">8.发送指令replyconfiglistening-port port-num</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">9.保存slave端口号</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>连接的三种方式</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.slaveof if ip port</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2.slave启动时 带参数 --slaveof masterip masterport</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3.服务器配置 slaveof if ip port</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据同步阶段</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">全量复制开始</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">①发送指令 psync2 请求同步数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">②master执行bgsave</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">③第一个slave建立连接，创建命令缓冲区</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">④生成rdb，通过socket发给slave</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">⑤vslave接受rdb，清空数据，执行rdb文件恢复</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">⑥发送命令，告知已经恢复完成</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">全量复制结束</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">部分复制开始</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">⑦发送复制缓冲区指令信息</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">⑧接受指令，执行bgrewriteeaof，恢复数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">部分复制结束</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>命令传播阶段</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">复制缓冲区 偏移量 字节值</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">工作原理： 通过offset区分不同的slave当前数据传播的差异，maste记录已发送的信息对应的offset，slave记录已经接受的offset</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据同步-全"><a href="#数据同步-全" class="headerlink" title="数据同步(全)"></a>数据同步(全)</h4><ul>
+<li><p>slave 发送指令 psync ？-1</p>
+</li>
+<li><p>master 收到发现没有偏移量，则使用 bgsave 生成 rdb 文件，记录当前的复制偏移量 offset</p>
+</li>
+<li><p>发送 fullresync runid offset，通过 socket 发送给 slave，期间收到客户端命令，offset 发生变化</p>
+</li>
+<li><p>收到 + fullresync 保存 master 的 runid 和 offset，清空当前数据，接受 rdb 文件，执行恢复</p>
+</li>
+<li><p>发送命令 psync2 runid offset</p>
+</li>
+<li><p>master 接受到命令，判定 runid 是否匹配，判定 offset 是否在缓冲中</p>
+</li>
+<li><p>如果 runid 和 offset 不匹配，则执行全量复制</p>
+</li>
+<li><p>如果 runid 和 master 校验通过，offset 和 offset 相同，忽略</p>
+</li>
+<li><p>如果 runid 和 master 校验通过，offset 和 offset 不相同，     发送 continue offset，通过 socket 发送缓冲区中 offset 到 offset 的数据</p>
+</li>
+<li><p>slave 接收到 continue，保存 master 的 offset，接受信息后，执行 bgrewriteaof,恢复数据</p>
+</li>
+<li></li>
+<li><p>主从复制参数注意</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">① slave-server-stable-data yes|no 同步过程，开启或关闭对外写操作</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">②repl-backlog-size 1mb 设置master指令缓冲区大小，</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>主从复制常见问题频繁全量复制</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">①缓冲区太小 导致offset不匹配 解决:缓冲区设置大点</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">②maset宕机重启，导致runid和offset丢失，全量复制 master执行shutdown 时，将runid和offset进行保存，重启时进行读取</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>频繁网络中断</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">① 执行命令一直阻塞耗时  设置超时时间</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据不一致</li>
+</ul>
+<h2 id="哨兵简介"><a href="#哨兵简介" class="headerlink" title="哨兵简介"></a>哨兵简介</h2><blockquote>
+<p>哨兵是一个分布式系统，用于对主从结构中的每台服务器做监控，当出现故障通过投票随机选择新的 master 并将所有的 slave 连接到信息 master</p>
+</blockquote>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><ul>
+<li>监控</li>
+<li>通知</li>
+<li>自动故障转移</li>
+</ul>
+<h3 id="启用哨兵模式"><a href="#启用哨兵模式" class="headerlink" title="启用哨兵模式"></a>启用哨兵模式</h3><ul>
+<li>启动哨兵</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-sentinel redis-sentinel.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">配置文件中配置 主redis节点</span><br></pre></td></tr></table></figure>
+
+<h3 id="哨兵工作原理"><a href="#哨兵工作原理" class="headerlink" title="哨兵工作原理"></a>哨兵工作原理</h3><h4 id="监控阶段"><a href="#监控阶段" class="headerlink" title="监控阶段"></a>监控阶段</h4><ul>
+<li>用于同步各个节点的状态信息<ul>
+<li>获取 sentinel 的状态(是否在线)</li>
+<li>获取 master 状态</li>
+<li>获取所有 slave 状态</li>
+<li>master 保存 sentinel 信息，作用是让其他 sentinel 来发现其他的 sentinel，建立订阅通道</li>
+</ul>
+</li>
+</ul>
+<h4 id="通知阶段"><a href="#通知阶段" class="headerlink" title="通知阶段"></a>通知阶段</h4><ul>
+<li>每个 sentinel 进行互通</li>
+</ul>
+<h4 id="故障转移阶段"><a href="#故障转移阶段" class="headerlink" title="故障转移阶段"></a>故障转移阶段</h4><ul>
+<li>sentinel 发现 master 关挂了，标记 master 为主观下线，然后发送命令给奇特哨兵，其他哨兵也会去看看状态，如果一半以上的哨兵认为 master 挂了，那就直接标记为客观下线，执行故障转移操作</li>
+<li>sentinel 通过竞选，然后获得此次处理 master 的权利，成为领头 sentinel<ul>
+<li>去除不在线的</li>
+<li>去除响应慢的</li>
+<li>与原 master 断开时间久的</li>
+<li>优先原则<ul>
+<li>优先级</li>
+<li>offset</li>
+<li>runid</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>发送指令<ul>
+<li>向新的 master 发送 slave no one 指令</li>
+<li>向其他 slave 发送 slaveof 新的 ip 端口</li>
+</ul>
+</li>
+</ul>
+<h2 id="集群简介"><a href="#集群简介" class="headerlink" title="集群简介"></a>集群简介</h2><h3 id="数据存储设计"><a href="#数据存储设计" class="headerlink" title="数据存储设计"></a>数据存储设计</h3><ul>
+<li>通过算法设计，计算出 key 应该保存的位置</li>
+<li>将所有的存储空间分割成 16384 份，每台主机保存一部分代表的是一个存储空间，不是一个 key 的保存空间</li>
+<li>将 key 按照计算的结果放到对应的存储空间</li>
+</ul>
+<h3 id="集群内部通讯设计"><a href="#集群内部通讯设计" class="headerlink" title="集群内部通讯设计"></a>集群内部通讯设计</h3><ul>
+<li>各个节点相互通信，保存各个库中槽的编号数据</li>
+<li>一次命中，直接返回</li>
+<li>一次未命中，告知具体位置</li>
+</ul>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><ul>
+<li>cluster-enabled yes</li>
+<li>cluster-config-file node-6379.conf</li>
+<li>cluster-node-timeout 10000</li>
+<li>在 src 下执行</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;redis-trib.rb create --replicas 1(一个master,一个slave,2 一个master两个slave)  主[...] 从[...]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>连接集群客户端</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -c</span><br></pre></td></tr></table></figure>
+
+<h1 id="企业级解决方案"><a href="#企业级解决方案" class="headerlink" title="企业级解决方案"></a>企业级解决方案</h1><h2 id="缓存预热"><a href="#缓存预热" class="headerlink" title="缓存预热"></a>缓存预热</h2><blockquote>
+<p>系统启动前，提前将相关的缓存数据直接加载到缓存系统，避免在用户请求的时候，先查询数据库，然后再将数据缓存的问题，用户直接查询事先被预热的数据</p>
+</blockquote>
+<h2 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h2><blockquote>
+<p>缓存雪崩就是瞬间过期数据量太大，导致对数据库服务器造成压力，如能够有效避免过期时间集中吗，可以有效解决雪崩现象的出现，配合其他策略一起使用，并监控服务器的运行数据，根据运行记录做快速调整</p>
+</blockquote>
+<h2 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h2><blockquote>
+<p>单个高热数据过期的瞬间，数据访问量比较大，未命中 redis，引发了大量对同一数据的数据库访问，导致对数据库服务器造成压力，对应策略应该业务数据分析与预防上进行，配合运行监控测试与即时调整策略，毕竟单个 key 过期监控难度高，配合雪崩处理策略即可，定时刷新、二级缓存、加锁</p>
+</blockquote>
+<h2 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h2><blockquote>
+<p>访问不存在的数据，跳过了合法数据的 redis 数据缓存阶段，每次访问数据库，造成对数据库的压力</p>
+</blockquote>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
+<li>缓存 null</li>
+<li>key 加密</li>
+<li>实时监控</li>
+<li>白名单策略  bitmaps(效率低)</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/" title="分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题" target="_blank" rel="external">http://example.com/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://yangletec.github.io/" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://yangletec.github.io/" target="_blank"><span class="text-dark">AI码师</span><small class="ml-1x">Web Developer &amp; Designer</small></a></h3>
+        <div>拥有五年一线大厂开发经验，擅长分布式、微服务、性能调优、源码分析、并发编程、面试经验分享等众多技能,关注公众号“AI码师”领取2021最新面试资料一份。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/02/28/hello-world/" title="Hello World"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/02/28/yuque/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BD%9C%E6%80%92%E8%82%9D%E4%BA%869%E9%81%93%20HashMap%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%9C%80%E8%A6%81%E7%9A%84%E5%BF%AB%E9%80%9F%E6%9D%A5%E5%8F%96%EF%BC%88%E4%B8%8D%E5%8C%85%E9%82%AE%E5%93%A6%EF%BC%89/" title="源码阅读｜怒肝了9道 HashMap经典面试题，需要的快速来取（不包邮哦）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+</body>
+</html>
