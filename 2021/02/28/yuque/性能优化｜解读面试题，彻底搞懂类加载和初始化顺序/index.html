@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>性能优化｜解读面试题，彻底搞懂类加载和初始化顺序 | Hexo</title>
+  <meta name="description" content="解读面试题，彻底搞懂类加载和初始化顺序在高级面试过程中，始终逃不过面试官的追问三连：  你知道 jvm 是怎么加载类的么？ 类的初始化顺序你有了解么？ 我出一个面试题，你能答出来么？  三连问下来，恐怕自己已经被劝退了，有的同学肯定会学过 jvm 是如何加载类的，但是被面试官疑问，就一脸懵了，主要原因是没有掌握到精髓，没有知道其中的原理，光靠死记硬背是不行的，面试官都看在眼里的。本文将带着大家一起">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化｜解读面试题，彻底搞懂类加载和初始化顺序">
+<meta property="og:url" content="http://example.com/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/index.html">
+<meta property="og:site_name" content="AI码师">
+<meta property="og:description" content="解读面试题，彻底搞懂类加载和初始化顺序在高级面试过程中，始终逃不过面试官的追问三连：  你知道 jvm 是怎么加载类的么？ 类的初始化顺序你有了解么？ 我出一个面试题，你能答出来么？  三连问下来，恐怕自己已经被劝退了，有的同学肯定会学过 jvm 是如何加载类的，但是被面试官疑问，就一脸懵了，主要原因是没有掌握到精髓，没有知道其中的原理，光靠死记硬背是不行的，面试官都看在眼里的。本文将带着大家一起">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211627-d8414429-ffbc-4cc9-8f1e-b6af5c879177.png#align=left&display=inline&height=372&margin=%5Bobject%20Object%5D&originHeight=372&originWidth=278&size=0&status=done&style=none&width=278">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211619-17cea2c7-16fa-47ca-85f2-2e61aaf086a6.png#align=left&display=inline&height=664&margin=%5Bobject%20Object%5D&originHeight=664&originWidth=2252&size=0&status=done&style=none&width=2252">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211683-e18ab62f-27ee-4e7f-9c3e-be78ab0a8416.png#align=left&display=inline&height=162&margin=%5Bobject%20Object%5D&originHeight=162&originWidth=328&size=0&status=done&style=none&width=328">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211613-467974d3-b9bf-4530-900e-c28c1876e92d.png#align=left&display=inline&height=370&margin=%5Bobject%20Object%5D&originHeight=370&originWidth=2068&size=0&status=done&style=none&width=2068">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/jpeg/12552073/1614522211667-0e455642-9c59-4cde-bb04-2b5b7c8c3baf.jpeg#align=left&display=inline&height=258&margin=%5Bobject%20Object%5D&originHeight=258&originWidth=258&size=0&status=done&style=none&width=258">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211638-f9720601-574e-4542-b52d-41008e324459.png#align=left&display=inline&height=1966&margin=%5Bobject%20Object%5D&originHeight=1966&originWidth=1762&size=0&status=done&style=none&width=1762">
+<meta property="article:published_time" content="2021-02-28T14:23:26.000Z">
+<meta property="article:modified_time" content="2021-02-28T14:24:02.301Z">
+<meta property="article:author" content="AI码师">
+<meta property="article:tag" content="JAVA,PYTHON,程序人生,面试经验">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211627-d8414429-ffbc-4cc9-8f1e-b6af5c879177.png#align=left&display=inline&height=372&margin=%5Bobject%20Object%5D&originHeight=372&originWidth=278&size=0&status=done&style=none&width=278">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="AI码师" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://yangletec.github.io/" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">AI码师</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Web Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hefei, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>关注公众号“AI 码师”领取2021最新面试资料一份</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+
+    
+      
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:23:29.589Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/" class="title">性能优化｜解读面试题，彻底搞懂类加载和初始化顺序</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:23:26.000Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/yuque/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BD%9C%E8%BF%9E%E5%B0%8F%E7%99%BD%E9%83%BD%E8%83%BD%E5%90%AC%E6%87%82%E7%9A%84%E2%80%9Csynchronized%E2%80%9D%E5%85%B3%E9%94%AE%E5%AD%97%E8%AE%B2%E8%A7%A3%EF%BC%8C%E9%9D%A2%E8%AF%95%E5%AE%98%E7%9B%B4%E5%91%BC%E5%A5%BD%EF%BC%81/" class="title">并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:22:29.000Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/" class="title">分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:21:40.000Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/28/yuque/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BD%9C%E6%80%92%E8%82%9D%E4%BA%869%E9%81%93%20HashMap%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%9C%80%E8%A6%81%E7%9A%84%E5%BF%AB%E9%80%9F%E6%9D%A5%E5%8F%96%EF%BC%88%E4%B8%8D%E5%8C%85%E9%82%AE%E5%93%A6%EF%BC%89/" class="title">源码阅读｜怒肝了9道 HashMap经典面试题，需要的快速来取（不包邮哦）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-28T14:21:00.000Z" itemprop="datePublished">2021-02-28</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<meta  name ="referrer" content ="no-referrer"/>
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-yuque/性能优化｜解读面试题，彻底搞懂类加载和初始化顺序" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      性能优化｜解读面试题，彻底搞懂类加载和初始化顺序
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/" class="article-date">
+	  <time datetime="2021-02-28T14:23:26.000Z" itemprop="datePublished">2021-02-28</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.3k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="解读面试题，彻底搞懂类加载和初始化顺序"><a href="#解读面试题，彻底搞懂类加载和初始化顺序" class="headerlink" title="解读面试题，彻底搞懂类加载和初始化顺序"></a>解读面试题，彻底搞懂类加载和初始化顺序</h1><p>在高级面试过程中，始终逃不过面试官的追问三连：</p>
+<ul>
+<li>你知道 jvm 是怎么加载类的么？</li>
+<li>类的初始化顺序你有了解么？</li>
+<li>我出一个面试题，你能答出来么？</li>
+</ul>
+<p>三连问下来，恐怕自己已经被劝退了，有的同学肯定会学过 jvm 是如何加载类的，但是被面试官疑问，就一脸懵了，主要原因是没有掌握到精髓，没有知道其中的原理，光靠死记硬背是不行的，面试官都看在眼里的。本文将带着大家一起分析面试题，来梳理下其中主要的知识点，相信大家在看完之后，也一定会有收获的，可以彻底告别面试官的连连追问了。</p>
+<h2 id="面试题-1"><a href="#面试题-1" class="headerlink" title="面试题 1"></a>面试题 1</h2><p>现在我们进入正题：<br>面试官直接抛过来第一道面试题，看看大家能猜出结果不</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">package org.apache.dubbo.demo.provider;</span><br><span class="line"></span><br><span class="line">public class JVMClass extends BaseCodeBlock &#123;</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(&quot;子类的普通代码块&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public JVMClass() &#123;</span><br><span class="line">        System.out.println(&quot;子类的构造方法&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void msg() &#123;</span><br><span class="line">        System.out.println(&quot;子类的普通方法&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void msg2() &#123;</span><br><span class="line">        System.out.println(&quot;子类的静态方法&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;子类的静态代码块&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        BaseCodeBlock bcb &#x3D; new JVMClass();</span><br><span class="line">        bcb.msg();</span><br><span class="line">    &#125;</span><br><span class="line">    Other o &#x3D; new Other();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class BaseCodeBlock &#123;</span><br><span class="line"></span><br><span class="line">    public BaseCodeBlock() &#123;</span><br><span class="line">        System.out.println(&quot;父类的构造方法&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void msg() &#123;</span><br><span class="line">        System.out.println(&quot;父类的普通方法&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void msg2() &#123;</span><br><span class="line">        System.out.println(&quot;父类的静态方法&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;父类的静态代码块&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Other2 o2 &#x3D; new Other2();</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(&quot;父类的普通代码块&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Other &#123;</span><br><span class="line">    Other() &#123;</span><br><span class="line">        System.out.println(&quot;初始化子类的属性值&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Other2 &#123;</span><br><span class="line">    Other2() &#123;</span><br><span class="line">        System.out.println(&quot;初始化父类的属性值&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大家可以把上面的代码拷贝到编辑器上面，执行下看看和自己预期的结果是否一致，这段代码基本上可以展示出了类加载和初始化顺序，给大家看下结果<br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211627-d8414429-ffbc-4cc9-8f1e-b6af5c879177.png#align=left&display=inline&height=372&margin=%5Bobject%20Object%5D&originHeight=372&originWidth=278&size=0&status=done&style=none&width=278"><br>可以看出如果有继承父类的话，会优先去初始化父类。遵循这样一个顺序</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211619-17cea2c7-16fa-47ca-85f2-2e61aaf086a6.png#align=left&display=inline&height=664&margin=%5Bobject%20Object%5D&originHeight=664&originWidth=2252&size=0&status=done&style=none&width=2252"><br>父类的静态代码块-&gt;子类的静态代码块-&gt;初始化父类的属性值/父类的普通代码块(按照代码的顺序排列执行)-&gt;父类的构造方法-&gt;初始化子类的属性值/子类的普通代码块(按照代码的顺序排列执行)-&gt;子类的构造方法。<br>构造方法最后才执行。</p>
+<h2 id="面试题-2"><a href="#面试题-2" class="headerlink" title="面试题 2"></a>面试题 2</h2><p>面试官开始出第二题了，又抛来一段代码，细品：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo;</span><br><span class="line"></span><br><span class="line">public class JVMClass2 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Singleton1 s1 &#x3D; Singleton1.getSingleton();</span><br><span class="line">        Singleton2 s2 &#x3D; Singleton2.getSingleton();</span><br><span class="line">        System.out.println(&quot;s1:counter1 &#x3D; &quot;+ s1.counter1);</span><br><span class="line">        System.out.println(&quot;s1:counter2 &#x3D; &quot;+s1.counter2);</span><br><span class="line">        System.out.println(&quot;s2:counter1 &#x3D; &quot;+ s2.counter1);</span><br><span class="line">        System.out.println(&quot;s2:counter2 &#x3D; &quot;+s2.counter2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Singleton1&#123;</span><br><span class="line">    private static Singleton1 singleton &#x3D; new Singleton1();</span><br><span class="line">    public static int counter1;</span><br><span class="line">    public static int counter2 &#x3D; 0;</span><br><span class="line">    public Singleton1()&#123;</span><br><span class="line">        counter1++;</span><br><span class="line">        counter2++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static Singleton1 getSingleton()&#123;</span><br><span class="line">        return singleton;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Singleton2&#123;</span><br><span class="line">    public static int counter1;</span><br><span class="line">    public static int counter2 &#x3D; 0;</span><br><span class="line">    private static Singleton2 singleton &#x3D; new Singleton2();</span><br><span class="line">    public Singleton2()&#123;</span><br><span class="line">        counter1++;</span><br><span class="line">        counter2++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static Singleton2 getSingleton()&#123;</span><br><span class="line">        return singleton;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大家可以开动脑经，结合上面的加载顺序，来分析分析这道题的答案。<br>我们直接看运行结果<br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211683-e18ab62f-27ee-4e7f-9c3e-be78ab0a8416.png#align=left&display=inline&height=162&margin=%5Bobject%20Object%5D&originHeight=162&originWidth=328&size=0&status=done&style=none&width=328"></p>
+<p>是不是和内心预期的有点出入啊，我们按照上面的思路分析下，</p>
+<ol>
+<li>构造器是在所有初始化之后才执行的</li>
+<li>那么在所有属性初始化之后，在执行构造器的时候，counter1 和 counter2 都会有默认的初始值 0，那么执行完构造器之后，counter1 和 counter2 结果肯定都是 1，</li>
+<li>如果这样的话，Singleton2 和 Singleton1 的执行结果应该是一样的，那么为什么 Singleton2 和我们的预期一致，Singleton1 却有出入呢</li>
+<li>我们看到他们俩唯一的区别是进行 new 实例化的位置不一样。</li>
+<li>既然找到了不同，我们继续往下分析，我们主要分析和我们预期不一致的 Singleton1。</li>
+<li>Singleton1 实例化是在静态变量位置上面，所有优先他们执行，所以进入构造器执行，同学们可能会有疑问了，上面不是说构造器是在最后才执行么，为什么这里会先执行呢？因为这个构造器执行是有实例化代码触发的，所以会进行内部递优先执行构造方法</li>
+<li>进入构造放方法，这时候 counter1 和 counter2 还是保持零值（这是有虚拟机加载 class 准备阶段执行的，后面会说），执行++之后，counter1 和 counter2 都会变成 1。构造方法执行结束，进入下一步</li>
+<li>counter1 没有被显示赋值，counter2 被重新赋值为 0，到此初始化结束。</li>
+<li>得到 counter1 和 counter2 分别为 1 和 0</li>
+</ol>
+<p>到此，面试已经结束，我们现在来结合理论知识来总结下 jvm 类加载和初始化顺序。</p>
+<p>java 类加载分为五个过程，如图：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211613-467974d3-b9bf-4530-900e-c28c1876e92d.png#align=left&display=inline&height=370&margin=%5Bobject%20Object%5D&originHeight=370&originWidth=2068&size=0&status=done&style=none&width=2068"></p>
+<h2 id="类加载顺序"><a href="#类加载顺序" class="headerlink" title="类加载顺序"></a>类加载顺序</h2><h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><ol>
+<li>文件格式的验证：</li>
+</ol>
+<p>验证文件格式是否按照虚拟机的规范，也就是我们前面 class 文件结构中的内容，比如这是不是一个 Class 文件（看魔数，是否位 CAFEBABE）；<br>Java 版本是否符合当前虚拟机的范围（Java 可以向下兼容，但是不能处理大于当前版本的程序）等等。</p>
+<ol>
+<li>元数据的验证：</li>
+</ol>
+<p>对 Class 文件中的元数据进行验证，是否存在不符合 Java 语义的元数据信息。这里有的朋友可能会比较疑惑，什么是元数据呢？一般情况下，一个文件中都数据和元数据。数据指的是实际数据，而元数据（Metadata）是用来描述       数据的数据。用过 Java 注解的朋友应该对元数据这种叫法并不陌生，对应的元注解，其实说的差不多都是一个意思。<br>举个例子：比如说我们定义了一个变量 int a = 1；可以理解成数据就是 1，而元数据就是描述有一个字符串变量“a”，这个“a”的类型是 int 型的，它的值也是一个 int 型的 1，这就是描述数据的数据，就是元数据。</p>
+<ol>
+<li>字节码的验证：</li>
+</ol>
+<p>通过数据流和控制流分析，来确定程序语义是否合法。<br>以数据来说，要保证类型转换是有效的；对于控制流程的代码，不能让指令跳转到其它方法的字节码指令上等……</p>
+<ol>
+<li>符号引用的验证：</li>
+</ol>
+<p>为了保证解析动作能正常完成，还需在虚拟机将符号引用转成直接引用的时候，判断其它要引用的类是否符合规定。比如，要引用的类是否能够被找到；引用的属性在对应类中是否存在，权限是否符合要求（private 的是不能访问       的）等。</p>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><h3 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h3><p>了解完加载的五大步之后，我们再看下最后一个重要的知识点，就是我们使用类的时候，什么时候会触发类的初始化呢，分为以下四种情况：</p>
+<h2 id="什么时候会进行类的初始化"><a href="#什么时候会进行类的初始化" class="headerlink" title="什么时候会进行类的初始化"></a>什么时候会进行类的初始化</h2><ol>
+<li>当遇到 new 、 getstatic、putstatic 或 invokestatic 这 4 条直接码指令时，比如 new 一个类，读取一个静态字段(未被 final 修饰)、或调用一个类的静态方法时。</li>
+<li>使用 java.lang.reflect 包的方法对类进行反射调用时 ，如果类没初始化，需要触发其初始化。</li>
+<li>初始化一个类，如果其父类还未初始化，则先触发该父类的初始化。</li>
+<li>当虚拟机启动时，用户需要定义一个要执行的主类 (包含 main 方法的那个类)，虚拟机会先初始化这个类。</li>
+<li>当使用 JDK1.7 的动态动态语言时，如果一个 MethodHandle 实例的最后解析结构为 REF_getStatic、REF_putStatic、REF_invokeStatic、的方法句柄，并且这个句柄没有初始化，则需要先触发器初始化。</li>
+</ol>
+<p>今天分享的面试内容到此结束，我们下一期再见吧。文末附赠视频教程和面试资料。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2021/jpeg/12552073/1614522211667-0e455642-9c59-4cde-bb04-2b5b7c8c3baf.jpeg#align=left&display=inline&height=258&margin=%5Bobject%20Object%5D&originHeight=258&originWidth=258&size=0&status=done&style=none&width=258"><br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614522211638-f9720601-574e-4542-b52d-41008e324459.png#align=left&display=inline&height=1966&margin=%5Bobject%20Object%5D&originHeight=1966&originWidth=1762&size=0&status=done&style=none&width=1762"></p>
+<blockquote>
+<p>微信搜一搜【乐哉开讲】关注帅气的我，回复【干货】，将会有大量面试资料和架构师必看书籍等你挑选，包括 java 基础、java 并发、微服务、中间件等更多资料等你来取哦。<br>书读的越多而不加思考，你就会觉得你知道得很多；而当你读书而思考得越多的时候，你就会越清楚地看到，你知道得很少。——伏尔泰</p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/" title="性能优化｜解读面试题，彻底搞懂类加载和初始化顺序" target="_blank" rel="external">http://example.com/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://yangletec.github.io/" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://yangletec.github.io/" target="_blank"><span class="text-dark">AI码师</span><small class="ml-1x">Web Developer &amp; Designer</small></a></h3>
+        <div>拥有五年一线大厂开发经验，擅长分布式、微服务、性能调优、源码分析、并发编程、面试经验分享等众多技能,关注公众号“AI码师”领取2021最新面试资料一份。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/02/28/hello-world/" title="Hello World"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/02/28/yuque/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BD%9C%E8%BF%9E%E5%B0%8F%E7%99%BD%E9%83%BD%E8%83%BD%E5%90%AC%E6%87%82%E7%9A%84%E2%80%9Csynchronized%E2%80%9D%E5%85%B3%E9%94%AE%E5%AD%97%E8%AE%B2%E8%A7%A3%EF%BC%8C%E9%9D%A2%E8%AF%95%E5%AE%98%E7%9B%B4%E5%91%BC%E5%A5%BD%EF%BC%81/" title="并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://yangletec.github.io/" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+
+</body>
+</html>
