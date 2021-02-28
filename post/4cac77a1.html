@@ -17,27 +17,23 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>趣味编程故事｜java进程占用cpu过高怎么办，别急我来帮你 | AI码师</title>
-  <meta name="description" content="tags: [elk, springboot]categories: 分布式专题   关注公众号“AI 码师”领取 2021 最新面试资料一份 【主演】运维小哥：小李 测试小姐姐：小红 开发人员：本色出演 【剧情】在一个阳光明媚的清晨，原本还在睡梦中的我，被小李（运维小哥）的电话给惊醒了。小李：线上告警出来一个问题，赶快看一下！我：啥问题啊？小李：xx 服务器 现在 cpu 已经 100%了，我">
+  <title>并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！ | AI码师</title>
+  <meta name="description" content="synchronized 有哪几种使用方式？  普通同步方法，锁是当前实例对象 静态同步方法，锁是当前类的 class 对象 同步代码块，锁事 synchronized 括号中的对象 jvm 怎么标识线程已经获取锁呢？这得要说说 java 对象头了       存储对象的 hashcode 或锁信息 存储到对象类型数据的指针 数组长度(如果当前对象是数组)    Mark Word Class M">
 <meta property="og:type" content="article">
-<meta property="og:title" content="趣味编程故事｜java进程占用cpu过高怎么办，别急我来帮你">
-<meta property="og:url" content="https://yangletec.github.io/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/index.html">
+<meta property="og:title" content="并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！">
+<meta property="og:url" content="https://yangletec.github.io/post/4cac77a1.html">
 <meta property="og:site_name" content="AI码师">
-<meta property="og:description" content="tags: [elk, springboot]categories: 分布式专题   关注公众号“AI 码师”领取 2021 最新面试资料一份 【主演】运维小哥：小李 测试小姐姐：小红 开发人员：本色出演 【剧情】在一个阳光明媚的清晨，原本还在睡梦中的我，被小李（运维小哥）的电话给惊醒了。小李：线上告警出来一个问题，赶快看一下！我：啥问题啊？小李：xx 服务器 现在 cpu 已经 100%了，我">
+<meta property="og:description" content="synchronized 有哪几种使用方式？  普通同步方法，锁是当前实例对象 静态同步方法，锁是当前类的 class 对象 同步代码块，锁事 synchronized 括号中的对象 jvm 怎么标识线程已经获取锁呢？这得要说说 java 对象头了       存储对象的 hashcode 或锁信息 存储到对象类型数据的指针 数组长度(如果当前对象是数组)    Mark Word Class M">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045130-6b142a76-4962-4434-8111-f269e0fd1ac2.png#align=left&display=inline&height=162&margin=%5Bobject%20Object%5D&originHeight=162&originWidth=1134&size=0&status=done&style=none&width=1134">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045069-524634bf-ca5f-41c4-9d0b-92dba0e634d0.png#align=left&display=inline&height=338&margin=%5Bobject%20Object%5D&originHeight=338&originWidth=1136&size=0&status=done&style=none&width=1136">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045070-0e7c7eff-c3dd-495e-bd51-0fbb6967a404.png#align=left&display=inline&height=82&margin=%5Bobject%20Object%5D&originHeight=82&originWidth=542&size=0&status=done&style=none&width=542">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045176-b3063503-78e6-4697-83bd-abfe95ca31dd.png#align=left&display=inline&height=356&margin=%5Bobject%20Object%5D&originHeight=356&originWidth=1320&size=0&status=done&style=none&width=1320">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045079-ba7a782e-3ef6-492f-89e2-bdd1a6d0430f.png#align=left&display=inline&height=382&margin=%5Bobject%20Object%5D&originHeight=382&originWidth=918&size=0&status=done&style=none&width=918">
-<meta property="article:published_time" content="2021-02-27T09:43:33.000Z">
-<meta property="article:modified_time" content="2021-02-28T14:31:14.990Z">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/jpeg/12552073/1614522179335-81927717-84c1-4312-9123-ced5c5daf6e8.jpeg#align=left&display=inline&height=258&margin=%5Bobject%20Object%5D&originHeight=258&originWidth=258&size=0&status=done&style=none&width=258">
+<meta property="article:published_time" content="2021-02-28T14:22:29.000Z">
+<meta property="article:modified_time" content="2021-02-28T14:38:11.495Z">
 <meta property="article:author" content="AI码师">
 <meta property="article:tag" content="JAVA,PYTHON,程序人生,面试经验">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045130-6b142a76-4962-4434-8111-f269e0fd1ac2.png#align=left&display=inline&height=162&margin=%5Bobject%20Object%5D&originHeight=162&originWidth=1134&size=0&status=done&style=none&width=1134">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2021/jpeg/12552073/1614522179335-81927717-84c1-4312-9123-ced5c5daf6e8.jpeg#align=left&display=inline&height=258&margin=%5Bobject%20Object%5D&originHeight=258&originWidth=258&size=0&status=done&style=none&width=258">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://yangletec.github.io/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/index.html">
+  <link rel="canonical" href="https://yangletec.github.io/post/4cac77a1.html">
   
     <link rel="alternate" href="/atom.xml" title="AI码师" type="application/atom+xml">
   
@@ -204,10 +200,10 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2021/02/28/hello-world/" class="title">Hello World</a>
+                <a href="/post/4a17b156.html" class="title">Hello World</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-02-28T14:30:46.962Z" itemprop="datePublished">2021-02-28</time>
+                <time datetime="2021-02-28T14:37:46.171Z" itemprop="datePublished">2021-02-28</time>
               </p>
             </div>
           </li>
@@ -219,7 +215,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2021/02/28/yuque/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BD%9C%E8%A7%A3%E8%AF%BB%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F/" class="title">性能优化｜解读面试题，彻底搞懂类加载和初始化顺序</a>
+                <a href="/post/27c9d2d5.html" class="title">性能优化｜解读面试题，彻底搞懂类加载和初始化顺序</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-02-28T14:23:26.000Z" itemprop="datePublished">2021-02-28</time>
@@ -234,7 +230,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2021/02/28/yuque/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BD%9C%E8%BF%9E%E5%B0%8F%E7%99%BD%E9%83%BD%E8%83%BD%E5%90%AC%E6%87%82%E7%9A%84%E2%80%9Csynchronized%E2%80%9D%E5%85%B3%E9%94%AE%E5%AD%97%E8%AE%B2%E8%A7%A3%EF%BC%8C%E9%9D%A2%E8%AF%95%E5%AE%98%E7%9B%B4%E5%91%BC%E5%A5%BD%EF%BC%81/" class="title">并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！</a>
+                <a href="/post/4cac77a1.html" class="title">并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-02-28T14:22:29.000Z" itemprop="datePublished">2021-02-28</time>
@@ -249,7 +245,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2021/02/28/yuque/%E5%88%86%E5%B8%83%E5%BC%8F%EF%BD%9C%E7%8E%A9%E8%BD%ACredis%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86%EF%BC%8C%E8%BD%BB%E8%BD%BB%E6%9D%BE%E6%9D%BE%E5%BA%94%E5%AF%B9%E5%90%84%E7%A7%8D%E9%9D%A2%E8%AF%95%E9%9A%BE%E9%A2%98/" class="title">分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题</a>
+                <a href="/post/1aefe554.html" class="title">分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-02-28T14:21:40.000Z" itemprop="datePublished">2021-02-28</time>
@@ -264,7 +260,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2021/02/28/yuque/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BD%9C%E6%80%92%E8%82%9D%E4%BA%869%E9%81%93%20HashMap%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%9C%80%E8%A6%81%E7%9A%84%E5%BF%AB%E9%80%9F%E6%9D%A5%E5%8F%96%EF%BC%88%E4%B8%8D%E5%8C%85%E9%82%AE%E5%93%A6%EF%BC%89/" class="title">源码阅读｜怒肝了9道 HashMap经典面试题，需要的快速来取（不包邮哦）</a>
+                <a href="/post/10bc2040.html" class="title">源码阅读｜怒肝了9道 HashMap经典面试题，需要的快速来取（不包邮哦）</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-02-28T14:21:00.000Z" itemprop="datePublished">2021-02-28</time>
@@ -286,14 +282,14 @@
 <meta  name ="referrer" content ="no-referrer"/>
 <main class="main" role="main">
   <div class="content">
-  <article id="post-yuque/趣味编程故事｜java进程占用cpu过高怎么办，别急我来帮你" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-yuque/并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      趣味编程故事｜java进程占用cpu过高怎么办，别急我来帮你
+      并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！
     </h1>
   
 
@@ -301,8 +297,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/" class="article-date">
-	  <time datetime="2021-02-27T09:43:33.000Z" itemprop="datePublished">2021-02-27</time>
+	<a href="/post/4cac77a1.html" class="article-date">
+	  <time datetime="2021-02-28T14:22:29.000Z" itemprop="datePublished">2021-02-28</time>
 	</a>
 </span>
         
@@ -310,7 +306,7 @@
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/post/4cac77a1.html#comments" class="article-comment-link">评论</a></span>
         
 	
 		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1k(字)</span>
@@ -323,43 +319,102 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <hr>
-<p>tags: [elk, springboot]<br>categories: 分布式专题</p>
-<hr>
-<hr>
-<p>关注公众号“AI 码师”领取 2021 最新面试资料一份</p>
-<h2 id="【主演】"><a href="#【主演】" class="headerlink" title="【主演】"></a>【主演】</h2><p>运维小哥：小李</p>
-<p>测试小姐姐：小红</p>
-<p>开发人员：本色出演</p>
-<h2 id="【剧情】"><a href="#【剧情】" class="headerlink" title="【剧情】"></a>【剧情】</h2><p>在一个阳光明媚的清晨，原本还在睡梦中的我，被小李（运维小哥）的电话给惊醒了。<br>小李：线上告警出来一个问题，赶快看一下！<br>我：啥问题啊？<br>小李：xx 服务器 现在 cpu 已经 100%了，我刚才查了下是 java 进程占用的<br>我：好的，我来看下</p>
-<p>我赶紧打开我的电脑，连接上了 xx 服务器，使用 top 命令查了下，确实是 java 进程占用 cpu 最高，我大脑飞速旋转想到:这几天也没有对程序做什么大改动啊，怎么会出现这个问题呢；</p>
-<p>于是我把本地代码切换到 master 分支，在本地跑了下发布到线上的代码，观察了一会，也没看见 cpu 占用很高啊，我就很纳闷了，然后又上服务器看了下，java 进程占用 cpu 还是比较高的，这是怎么回事呢？难道要拿出我的杀手锏？</p>
-<p>接下来场面就比较血腥了，前方高能预警，系好安全带</p>
-<h2 id="【高能预警】"><a href="#【高能预警】" class="headerlink" title="【高能预警】"></a>【高能预警】</h2><p>我拿出了杀手锏，江湖上失传已久的九阴真经（其实就是平时的笔记哈哈），在上面找了一些命令，然后就是接下来的场景了：</p>
-<p>【步骤一】找到最耗 cpu 的进程</p>
-<p>top<br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045130-6b142a76-4962-4434-8111-f269e0fd1ac2.png#align=left&display=inline&height=162&margin=%5Bobject%20Object%5D&originHeight=162&originWidth=1134&size=0&status=done&style=none&width=1134"></p>
-<p>得到最占用 CPU 的进程为：39890</p>
-<p>【步骤二】找到 39890 进程中最消耗 cpu 的线程</p>
-<p>top -d 1 -Hp 39890</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045069-524634bf-ca5f-41c4-9d0b-92dba0e634d0.png#align=left&display=inline&height=338&margin=%5Bobject%20Object%5D&originHeight=338&originWidth=1136&size=0&status=done&style=none&width=1136"></p>
-<p>得到最耗 CPU 的进程为 39900</p>
-<p>【步骤二】将 PID 转换为十六进制</p>
-<p>我们拿到了进程 PID 为：39900<br>我们需要将它转为十六进制，才能进行后续指令操作<br>printf “%x\n” 39900<br>得到结果：9bdc<br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045070-0e7c7eff-c3dd-495e-bd51-0fbb6967a404.png#align=left&display=inline&height=82&margin=%5Bobject%20Object%5D&originHeight=82&originWidth=542&size=0&status=done&style=none&width=542"></p>
-<p>【步骤三】打印当前线程的栈信息，看看它到底在干嘛</p>
-<p>jstack 39890 | grep ‘9bdc’ -C5<br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045176-b3063503-78e6-4697-83bd-abfe95ca31dd.png#align=left&display=inline&height=356&margin=%5Bobject%20Object%5D&originHeight=356&originWidth=1320&size=0&status=done&style=none&width=1320"></p>
-<p>现在已经找到了线程的栈信息，我看到了我自己写的代码，我用红框标记出来了</p>
-<p>【步骤四】带着疑问去找代码</p>
-<p>我们根据栈信息，直接在我们项目上定位到了那段代码<br><img src="https://cdn.nlark.com/yuque/0/2021/png/12552073/1614419045079-ba7a782e-3ef6-492f-89e2-bdd1a6d0430f.png#align=left&display=inline&height=382&margin=%5Bobject%20Object%5D&originHeight=382&originWidth=918&size=0&status=done&style=none&width=918"></p>
-<p>我发现，这里有一个死循环，我擦，忘记加休眠时间了，导致一直在死循环跑呢，终于找到问题根源了，加上了休眠时间，然后本地测试了下没问题；</p>
-<p>关键这是线上的问题，得要赶紧上线啊，但是也得测试呢，我不得不拨通了小红（测试小姐姐）的电话，嘀。嘀。嘀。，我心里也在滴滴滴，这么早打电话给她让她测试，免不了被训，我已经做好了心里准备了，咦，通了：</p>
-<p>小红：干啥？（测试小姐姐总是这么彪悍）</p>
-<p>我：有有有一个小小的线上问题(说话已经开始紧张了，生怕她开骂，哈哈)，我已经改好了，需要你测试下，然后抓紧上线。</p>
-<p>小红：今天不是周末么，还要测试，让不让人睡觉了啊？</p>
-<p>我：我我。。。，小姐姐，你长得这么可爱，美丽，端庄，温柔，贤惠，就帮忙测试下么，不然我这个月绩效又要被扣了…</p>
-<p>小红：看你这么诚实，这次就勉强帮你测试下吧，但是下次不要在周末给我发提测了。</p>
-<p>我：好的呢，下…(对方已经挂断了电话…)</p>
-<p>哈哈，不管咋样，现在已经没我的事了，我合上电脑，又进入了梦乡…</p>
-<h2 id="全剧终"><a href="#全剧终" class="headerlink" title="全剧终"></a>全剧终</h2><p>经历了一次线上 bug 排查，让我胆战心惊，不过这次也给我增加了不少经验，毕竟重拾了 九阴正经，让我内功又增强了；<br>后期会发布更多在实战方面的工作经验，与大家分享，希望大家能够喜欢，现在我需要你们的一键三连，哈哈，下期见。</p>
+        <p>synchronized 有哪几种使用方式？</p>
+<ul>
+<li>普通同步方法，锁是当前实例对象</li>
+<li>静态同步方法，锁是当前类的 class 对象</li>
+<li>同步代码块，锁事 synchronized 括号中的对象<blockquote>
+<p>jvm 怎么标识线程已经获取锁呢？这得要说说 java 对象头了</p>
+</blockquote>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>存储对象的 hashcode 或锁信息</th>
+<th>存储到对象类型数据的指针</th>
+<th>数组长度(如果当前对象是数组)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Mark Word</td>
+<td>Class Metadata Address</td>
+<td>Array length</td>
+</tr>
+</tbody></table>
+<p>注意：锁可以升级但是不能降级</p>
+<blockquote>
+<p>什么是偏向锁？</p>
+</blockquote>
+<ul>
+<li>偏向锁的获取<ol>
+<li> 线程 A 进入临界点前，判断对象头中 Mark Word 中是否存着指向本线程的偏向锁，如果有，则直接获取锁成功，进入临界区，如果不存在，则执行下一步</li>
+<li> Mark word 的偏向锁表示位是否设置成 1(当前已经是偏向锁)，如果没有，则使用 CAS 竞争锁，否则</li>
+<li> 使用 CAS 将对象头的偏向锁指向当前线程</li>
+</ol>
+</li>
+<li>偏向锁的撤销<ol>
+<li> 锁撤销只会发生在锁竞争的时候并且当前没有正在执行的字节码</li>
+<li> 暂停拥有偏向锁的线程</li>
+<li> 检查拥有偏向锁的进程是否存活，如果不处于存活状态，则将对象头设置为无锁状态，否则</li>
+<li> 如果线程一直存活，则拥有偏向锁的栈会被执行，栈中的锁记录和对象头的 Mark word 要么重新偏向于其他线程，要么恢复到无无锁状态，最后唤醒暂停的线程</li>
+</ol>
+</li>
+<li>关闭偏向锁<br>偏向锁在 jdk 中默认是启用的，如果你确定你的线程中会发生锁竞争，那么你可以使用如下命令关闭偏向锁<br>-XX:BiasedLockingStartupDelay = 0;</li>
+</ul>
+<blockquote>
+<p>轻量级锁</p>
+</blockquote>
+<ul>
+<li>轻量级锁加锁<ol>
+<li> 线程在执行同步代码块之前，JVM 会在当前的栈桢中创建存储锁记录的空间，并将锁对象头的 Mark Word 内容复制到刚才创建的锁记录空间中，这一步叫做“Displaced Mark Word”，</li>
+<li> 然后当前线程尝试使用 CAS 将对象头中的 Mark Word 替换为指向当前锁记录空间的内存地址，</li>
+<li> 如果替换成功则成功获取锁，否则表示有其他线程在竞争这把锁，则</li>
+<li> 使用自旋的方式来获取锁。</li>
+</ol>
+</li>
+<li>轻量级锁解锁<ol>
+<li> 使用 CAS 操作将获取锁之前复制的 Mark Word 替换回锁对象头中，如果成果成功，则表示没有竞争发生，</li>
+<li> 如果失败，锁就会膨胀成重量级锁，并且在使用自旋方式尝试获取轻量级锁的线程会被阻塞</li>
+<li> 拥有轻量级锁的线程释放锁并唤醒等待的线程，被唤醒的线程重新争夺锁，访问临界区。</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>为什么锁不能被降级<br>锁的优缺点对比</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>锁</th>
+<th>优点</th>
+<th>缺点</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>偏向锁</td>
+<td>加锁和解锁不需要额外的消耗</td>
+<td>如果线程间存在竞争，则需要额外消耗</td>
+<td>只有一个线程的场景</td>
+</tr>
+<tr>
+<td>轻量级锁</td>
+<td>竞争的线程不会阻塞，提高程序响应速度</td>
+<td>自旋操作，时间过长会消耗过多的 cpu</td>
+<td>追求响应时间，同步块中的任务执行的很快，不会长时间阻塞</td>
+</tr>
+<tr>
+<td>重量级锁</td>
+<td>线程竞争不使用自旋，不会消耗过多 cpu</td>
+<td>线程阻塞，响应时间慢</td>
+<td>追求吞吐量，同步块执行时间长</td>
+</tr>
+</tbody></table>
+<p><img src="https://cdn.nlark.com/yuque/0/2021/jpeg/12552073/1614522179335-81927717-84c1-4312-9123-ced5c5daf6e8.jpeg#align=left&display=inline&height=258&margin=%5Bobject%20Object%5D&originHeight=258&originWidth=258&size=0&status=done&style=none&width=258"></p>
+<blockquote>
+<p>微信搜一搜【AI 码师】关注帅气的我，回复【干货】，将会有大量面试资料和架构师必看书籍等你挑选，包括 java 基础、java 并发、微服务、中间件等更多资料等你来取哦。<br>书读的越多而不加思考，你就会觉得你知道得很多；而当你读书而思考得越多的时候，你就会越清楚地看到，你知道得很少。——伏尔泰</p>
+</blockquote>
 
       
     </div>
@@ -369,7 +424,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://yangletec.github.io/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/" title="趣味编程故事｜java进程占用cpu过高怎么办，别急我来帮你" target="_blank" rel="external">https://yangletec.github.io/2021/02/27/yuque/%E8%B6%A3%E5%91%B3%E7%BC%96%E7%A8%8B%E6%95%85%E4%BA%8B%EF%BD%9Cjava%E8%BF%9B%E7%A8%8B%E5%8D%A0%E7%94%A8cpu%E8%BF%87%E9%AB%98%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%8C%E5%88%AB%E6%80%A5%E6%88%91%E6%9D%A5%E5%B8%AE%E4%BD%A0/</a>
+      <a href="https://yangletec.github.io/post/4cac77a1.html" title="并发编程｜连小白都能听懂的“synchronized”关键字讲解，面试官直呼好！" target="_blank" rel="external">https://yangletec.github.io/post/4cac77a1.html</a>
     </li>
     
     <li class="post-copyright-license">
@@ -416,12 +471,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2021/02/28/yuque/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BD%9C%E6%80%92%E8%82%9D%E4%BA%869%E9%81%93%20HashMap%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%9C%80%E8%A6%81%E7%9A%84%E5%BF%AB%E9%80%9F%E6%9D%A5%E5%8F%96%EF%BC%88%E4%B8%8D%E5%8C%85%E9%82%AE%E5%93%A6%EF%BC%89/" title="源码阅读｜怒肝了9道 HashMap经典面试题，需要的快速来取（不包邮哦）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/post/27c9d2d5.html" title="性能优化｜解读面试题，彻底搞懂类加载和初始化顺序"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2021/02/27/yuque/5%E5%B9%B4%E8%80%81java%E5%BC%80%E5%8F%91%EF%BC%8C%E6%88%91%E7%9C%8B%E8%BF%87%E5%93%AA%E4%BA%9B%E4%B9%A6%EF%BC%8C%E7%9C%8B%E8%BF%87%E5%93%AA%E4%BA%9B%E8%A7%86%E9%A2%91%EF%BC%8C%E5%88%B7%E8%BF%87%E5%93%AA%E4%BA%9B%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%8C%E9%83%BD%E5%9C%A8%E8%BF%99%E9%87%8C%E4%BA%86/" title="5年老java开发，我看过哪些书，看过哪些视频，刷过哪些面试题，都在这里了"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/post/1aefe554.html" title="分布式｜玩转redis看这一篇就够了，轻轻松松应对各种面试难题"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
